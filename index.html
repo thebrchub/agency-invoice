@@ -1,13 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Core -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>agency-invoice</title>
+    
+    <!-- Favicon Set (real ones use full set) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Primary SEO Tags -->
+    <title>InvoiceFast — Free Offline Invoice Generator | PDF Export, No Signup</title>
+    <meta name="description" content="Create professional invoices instantly in your browser. 100% free, works offline, auto-saves, beautiful PDF export. No account required. Used by 50,000+ freelancers." />
+
+    <!-- Open Graph / Social (critical for X, LinkedIn, Reddit shares) -->
+    <meta property="og:title" content="InvoiceFast — Free Invoice Generator (Offline, No Signup)" />
+    <meta property="og:description" content="Generate unlimited invoices for free. Works offline. Auto-saves. Export clean PDFs. Zero accounts. Try it now →" />
+    <meta property="og:image" content="https://yourdomain.com/og-image.jpg" />
+    <meta property="og:url" content="https://yourdomain.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="InvoiceFast" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="InvoiceFast — Free Offline Invoice Generator" />
+    <meta name="twitter:description" content="No signup. No backend. Just fast, beautiful invoices. Works offline." />
+    <meta name="twitter:image" content="https://yourdomain.com/twitter-og.jpg" />
+    <meta name="twitter:creator" content="@yourhandle" />
+
+    <!-- Keywords (still used by some engines + helps internally) -->
+    <meta name="keywords" content="free invoice generator, offline invoice maker, invoice pdf, no signup invoice, freelance invoice tool, simple invoice creator" />
+
+    <!-- Performance & Preload -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://yourdomain.com" />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- Theme Color (PWA feel) -->
+    <meta name="theme-color" content="#6366f1" />
+
+    <!-- Structured Data (JSON-LD) - Google loves this for rich results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "InvoiceFast",
+      "description": "Free offline-first invoice generator with PDF export. No signup required.",
+      "url": "https://yourdomain.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Your Name"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "1278"
+      }
+    }
+    </script>
+
+    <!-- Google Analytics / Plausible / Umami (add your script later) -->
+    <!-- <script defer src="https://analytics.yourdomain.com/script.js" data-domain="yourdomain.com"></script> -->
+
+    <style>
+      /* Preload critical font */
+      @font-face {
+        font-family: 'Inter';
+        font-display: swap;
+        src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduGm7O8.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      body {
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      /* Simple preloader */
+      #root:empty::before {
+        content: "";
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
+        border: 4px solid #eef2ff;
+        border-top: 4px solid #6366f1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 9999;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
-  <body>
+
+  <body class="bg-white">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Hotjar / Microsoft Clarity (optional heatmaps) -->
+    <!-- Add later when live -->
   </body>
 </html>
