@@ -1,80 +1,131 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect
+} from "react";
+
 import {
   getInitialState,
   DEFAULT_INVOICE_DATA,
   DEFAULT_ITEMS,
   DEFAULT_POSTS,
   THEMES,
-  CURRENCIES,
   CURRENCY_MAP,
   getNewInvoiceNumber,
   STORAGE_KEY
-} from './utils/constants';
+} from "./utils/constants";
 
-import HomePage from './components/HomePage';
-import InvoiceGeneratorScreen from './components/InvoiceGeneratorScreen';
+// Pages
+import HomePage from "./pages/HomePage";
+import InvoicePage from "./pages/InvoicePage";
+import QuotationPage from "./pages/QuotationPage"; // <--- 1. Import Added
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useParams
+} from "react-router-dom";
+
+// ---------------------------
+// Wrapper to inject router params & navigation into InvoicePage
+// ---------------------------
+function InvoicePageWrapper({ appState, handlers }) {
+  const { id } = useParams(); // invoice ID from URL
+  const navigate = useNavigate();
+
+  // Load invoice if URL contains ID
+  useEffect(() => {
+    if (id && handlers.loadClientData) {
+      // handlers.loadInvoiceById(id);
+    }
+  }, [id, handlers]);
+
+  const currency =
+    CURRENCY_MAP?.[appState.currencyCode] || { symbol: "₹" };
+  const theme =
+    THEMES?.[appState.selectedTheme] ||
+    THEMES?.default ||
+    {};
+
+  return (
+    <InvoicePage
+      appState={appState}
+      setAppState={handlers.setAppState}
+      currencySymbol={currency.symbol}
+      theme={theme}
+      setInvoiceField={handlers.setInvoiceField}
+      addClient={handlers.addClient}
+      openClientModal={handlers.openClientModal}
+      closeClientModal={handlers.closeClientModal}
+      loadClientData={handlers.loadClientData}
+      saveCurrentInvoice={handlers.saveCurrentInvoice}
+      startNewInvoice={handlers.startNewInvoice}
+      setAppPartialState={handlers.setAppPartialState}
+      navigate={navigate}
+    />
+  );
+}
 
 function App() {
+  // ---------------------------
+  // GLOBAL STATE
+  // ---------------------------
   const [appState, setAppState] = useState(getInitialState);
 
-  // ---- Auto-save ----
+  // ---------------------------
+  // AUTO SAVE TO LOCAL STORAGE
+  // ---------------------------
   useEffect(() => {
     const stateToSave = {
       ...appState,
-      // store only base64 strings (if you keep them in state)
       logoBase64: appState.logoBase64 || null,
       qrBase64: appState.qrBase64 || null,
-      signatureBase64: appState.signatureBase64 || null,
-      view: appState.view === 'invoice' ? 'invoice' : 'home'
+      signatureBase64: appState.signatureBase64 || null
     };
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
     } catch (err) {
-      console.warn('LocalStorage save failed', err);
+      console.warn("LocalStorage save failed", err);
     }
 
-    // UI save feedback (keeps it local, doesn't re-trigger this effect)
-    setAppState(prev => ({ ...prev, showSaveMessage: true }));
-    const timer = setTimeout(() => {
-      setAppState(prev => ({ ...prev, showSaveMessage: false }));
-    }, 1500);
+    // Save feedback
+    if (appState.showSaveMessage) {
+        const timer = setTimeout(() => {
+            setAppState((prev) => ({ ...prev, showSaveMessage: false }));
+        }, 1500);
+        return () => clearTimeout(timer);
+    }
+  }, [appState]);
 
-    return () => clearTimeout(timer);
-  }, [
-    // use the unified names
-    appState.invoiceData,
-    appState.items,
-    appState.postDetails,
-    appState.clients,
-    appState.selectedTheme,
-    appState.isGstEnabled,
-    appState.isIndianClient,
-    appState.currencyCode,
-    appState.logoBase64,
-    appState.qrBase64,
-    appState.signatureBase64,
-    appState.view
-  ]);
-
+  // ---------------------------
+  // STATE UPDATERS
+  // ---------------------------
   const setAppPartialState = useCallback((newProps) => {
-    setAppState(prev => ({ ...prev, ...newProps }));
-  }, []);
-
-  const setView = useCallback((newView) => {
-    setAppState(prev => ({ ...prev, view: newView }));
+    setAppState((prev) => ({ ...prev, ...newProps }));
   }, []);
 
   const memoizedHandlers = useMemo(() => {
-    const handlers = {
+    return {
       setAppPartialState,
       setAppState,
-      setInvoiceField: (field, value) => setAppState(prev => ({ ...prev, invoiceData: { ...prev.invoiceData, [field]: value } })),
+
+      setInvoiceField: (field, value) =>
+        setAppState((prev) => ({
+          ...prev,
+          invoiceData: { ...prev.invoiceData, [field]: value }
+        })),
 
       addClient: (name) => {
-        const trimmed = (name || '').trim();
-        if (!trimmed) { alert('Client name required'); return; }
-        setAppState(prev => {
+        const trimmed = (name || "").trim();
+        if (!trimmed) {
+          alert("Client name required");
+          return;
+        }
+        setAppState((prev) => {
           const newClientId = Date.now().toString();
           const newClients = {
             ...prev.clients,
@@ -84,39 +135,54 @@ function App() {
             ...prev,
             clients: newClients,
             currentClientId: newClientId,
-            invoiceData: { ...DEFAULT_INVOICE_DATA, invoiceNumber: getNewInvoiceNumber(newClients), clientName: trimmed },
+            invoiceData: {
+              ...DEFAULT_INVOICE_DATA,
+              invoiceNumber: getNewInvoiceNumber(newClients),
+              clientName: trimmed
+            },
             items: DEFAULT_ITEMS,
             postDetails: DEFAULT_POSTS,
-            showClientModal: false,
-            view: 'invoice'
+            showClientModal: false
           };
         });
       },
 
-      openClientModal: () => setAppState(prev => ({ ...prev, showClientModal: true })),
-      closeClientModal: () => setAppState(prev => ({ ...prev, showClientModal: false })),
+      openClientModal: () =>
+        setAppState((prev) => ({ ...prev, showClientModal: true })),
+      closeClientModal: () =>
+        setAppState((prev) => ({ ...prev, showClientModal: false })),
 
       loadClientData: (clientId) => {
-        setAppState(prev => {
+        setAppState((prev) => {
           const client = prev.clients?.[clientId];
           if (!client) return prev;
-          const latestInvoice = client.invoices?.[client.invoices.length - 1];
+
+          const latestInvoice =
+            client.invoices?.[client.invoices.length - 1];
+
           return {
             ...prev,
             currentClientId: clientId,
-            invoiceData: latestInvoice ? { ...latestInvoice.invoiceData } : { ...DEFAULT_INVOICE_DATA, invoiceNumber: getNewInvoiceNumber(prev.clients), clientName: client.name },
+            invoiceData: latestInvoice
+              ? { ...latestInvoice.invoiceData }
+              : {
+                  ...DEFAULT_INVOICE_DATA,
+                  invoiceNumber: getNewInvoiceNumber(prev.clients),
+                  clientName: client.name
+                },
             items: latestInvoice ? [...latestInvoice.items] : DEFAULT_ITEMS,
-            postDetails: latestInvoice ? [...latestInvoice.postDetails] : DEFAULT_POSTS
+            postDetails: latestInvoice
+              ? [...latestInvoice.postDetails]
+              : DEFAULT_POSTS
           };
         });
       },
 
       saveCurrentInvoice: () => {
-        setAppState(prev => {
+        setAppState((prev) => {
           const currentClientId = prev.currentClientId;
           if (!currentClientId || !prev.clients?.[currentClientId]) {
-            // keep state unchanged, but inform user
-            alert('Please select or create a client first.');
+            alert("Please select or create a client first.");
             return prev;
           }
 
@@ -128,83 +194,82 @@ function App() {
             dateSaved: new Date().toISOString()
           };
 
-          const currentClient = prev.clients[currentClientId];
-          const currentInvoices = Array.isArray(currentClient.invoices) ? currentClient.invoices : [];
-          const existingIndex = currentInvoices.findIndex(inv => inv.invoiceId === newInvoice.invoiceId);
+          const client = prev.clients[currentClientId];
+          const invoices = Array.isArray(client.invoices)
+            ? client.invoices
+            : [];
+          const idx = invoices.findIndex(
+            (inv) => inv.invoiceId === newInvoice.invoiceId
+          );
 
-          const updatedInvoices = existingIndex !== -1
-            ? currentInvoices.map((inv, idx) => idx === existingIndex ? newInvoice : inv)
-            : [...currentInvoices, newInvoice];
+          const updatedInvoices =
+            idx !== -1
+              ? invoices.map((inv, i) => (i === idx ? newInvoice : inv))
+              : [...invoices, newInvoice];
 
           return {
             ...prev,
-            clients: { ...prev.clients, [currentClientId]: { ...currentClient, invoices: updatedInvoices } },
+            clients: {
+              ...prev.clients,
+              [currentClientId]: {
+                ...client,
+                invoices: updatedInvoices
+              }
+            },
             showSaveMessage: true
           };
         });
       },
 
       startNewInvoice: () => {
-        setAppState(prev => {
+        setAppState((prev) => {
           const cid = prev.currentClientId;
           if (!cid || !prev.clients?.[cid]) {
-            alert('Please select a client before starting a new invoice.');
+            alert("Please select a client before creating a new invoice.");
             return prev;
           }
           return {
             ...prev,
-            invoiceData: { ...DEFAULT_INVOICE_DATA, invoiceNumber: getNewInvoiceNumber(prev.clients), clientName: prev.clients[cid].name },
+            invoiceData: {
+              ...DEFAULT_INVOICE_DATA,
+              invoiceNumber: getNewInvoiceNumber(prev.clients),
+              clientName: prev.clients[cid].name
+            },
             items: DEFAULT_ITEMS,
             postDetails: DEFAULT_POSTS
           };
         });
-      },
-
-      setView
+      }
     };
+  }, [setAppPartialState]);
 
-    return handlers;
-  }, [
-    setAppPartialState,
-    setAppState,
-    setView,
-    // keep these deps up-to-date so handlers recreate when clients/currentClientId change
-    appState.currentClientId,
-    appState.clients,
-    appState.invoiceData,
-    appState.items,
-    appState.postDetails,
-    appState.logoBase64,
-    appState.qrBase64,
-    appState.signatureBase64
-  ]);
+  // ---------------------------
+  // ROUTING
+  // ---------------------------
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        
+        {/* --- 2. Route Added --- */}
+        <Route path="/quotation" element={<QuotationPage />} />
 
-  // Routing
-  if (appState.view === 'home') return <HomePage onViewChange={setView} />;
+        <Route
+          path="/invoice"
+          element={
+            <InvoicePageWrapper appState={appState} handlers={memoizedHandlers} />
+          }
+        />
 
-  if (appState.view === 'invoice') {
-    const currency = CURRENCY_MAP?.[appState.currencyCode];
-    const theme = THEMES?.[appState.selectedTheme] || THEMES?.default || {};
-    return (
-      <InvoiceGeneratorScreen
-        appState={appState}
-        setAppState={memoizedHandlers.setAppState}
-        currencySymbol={currency ? currency.symbol : appState.currencyCode || '₹'}
-        theme={theme}
-        setInvoiceField={memoizedHandlers.setInvoiceField}
-        addClient={memoizedHandlers.addClient}
-        openClientModal={memoizedHandlers.openClientModal}
-        closeClientModal={memoizedHandlers.closeClientModal}
-        loadClientData={memoizedHandlers.loadClientData}
-        saveCurrentInvoice={memoizedHandlers.saveCurrentInvoice}
-        startNewInvoice={memoizedHandlers.startNewInvoice}
-        setAppPartialState={memoizedHandlers.setAppPartialState}
-        setView={memoizedHandlers.setView}
-      />
-    );
-  }
-
-  return null;
+        <Route
+          path="/invoice/:id"
+          element={
+            <InvoicePageWrapper appState={appState} handlers={memoizedHandlers} />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
