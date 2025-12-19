@@ -18,7 +18,16 @@ import {
 } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
+
+// NOTE: This import is commented out for the preview to work. 
+// Uncomment this in your local environment and remove the placeholder below.
 import HeroMockupSwitcher from '../components/HeroMockupSwitcher';
+import PrivacyModal from '../components/PrivacyModal';
+import TermsModal from '../components/TermsModal';
+
+
+
+// -------------------------------------------------------------
 
 /* -------------------------
    Small shared components
@@ -56,7 +65,7 @@ const FeatureRow = ({ icon: Icon, title, desc, isDarkMode }) => (
   >
     <div
       className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
-        isDarkMode ? 'bg-indigo-900/40 text-indigo-300' : 'bg-indigo-50 text-indigo-600'
+        isDarkMode ? 'bg-emerald-900/40 text-emerald-300' : 'bg-emerald-50 text-emerald-600'
       }`}
     >
       <Icon className="w-6 h-6" />
@@ -79,6 +88,7 @@ const FeatureRow = ({ icon: Icon, title, desc, isDarkMode }) => (
     </div>
   </div>
 );
+
 
 /* -------------------------
    Scroll reveal wrapper
@@ -144,15 +154,27 @@ const Navbar = ({ isDarkMode, toggleDarkMode }) => {
       <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
         
         {/* Logo */}
-        <div className="flex items-center gap-2.5 cursor-pointer" onClick={scrollToTop}>
-          <div className="bg-indigo-600 text-white p-1.5 rounded-xl">
-            <FileText className="w-5 h-5" />
-          </div>
-          <span className={`text-[17px] md:text-lg font-semibold tracking-tight ${
-            isDarkMode ? 'text-white' : 'text-slate-900'
-          }`}>
-            Invoicely <span className={isDarkMode ? 'text-indigo-300' : 'text-indigo-600'}>Free</span>
-          </span>
+        <div
+          className="relative flex items-center cursor-pointer"
+          onClick={scrollToTop}
+        >
+          {/* Light logo */}
+          <img
+            src="/logo1.png"
+            alt="IndieByll Light"
+            className={`absolute h-40 md:h-40 w-auto object-contain transition-opacity duration-300 ease-in-out
+              ${isDarkMode ? 'opacity-0' : 'opacity-100'}
+            `}
+          />
+
+          {/* Dark logo */}
+          <img
+            src="/logo2.png"
+            alt="IndieByll Dark"
+            className={`h-40 md:h-40 w-auto object-contain transition-opacity duration-300 ease-in-out
+              ${isDarkMode ? 'opacity-100' : 'opacity-0'}
+            `}
+          />
         </div>
 
         {/* Desktop Navigation */}
@@ -202,8 +224,8 @@ const Navbar = ({ isDarkMode, toggleDarkMode }) => {
           {/* Invoice */}
           <button
             onClick={() => navigate('/invoice')}
-            className={`px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all shadow-lg shadow-indigo-500/20 ${
-              isDarkMode ? 'bg-indigo-500 text-white hover:bg-indigo-400' : 'bg-slate-900 text-white hover:bg-slate-800'
+            className={`px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all shadow-lg shadow-emerald-500/20 ${
+              isDarkMode ? 'bg-emerald-500 text-white hover:bg-emerald-400' : 'bg-slate-900 text-white hover:bg-slate-800'
             }`}
           >
              Invoice <ArrowRight className="w-4 h-4" />
@@ -231,8 +253,8 @@ const Navbar = ({ isDarkMode, toggleDarkMode }) => {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className={`md:hidden px-5 py-4 border-t ${isDarkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-100 bg-white'}`}>
-             <button onClick={() => navigate('/invoice')} className="block w-full text-left py-3 font-semibold text-indigo-500">Create Invoice</button>
-             <button onClick={() => navigate('/quotation')} className="block w-full text-left py-3 font-semibold text-indigo-500">Create Quotation</button>
+              <button onClick={() => navigate('/invoice')} className="block w-full text-left py-3 font-semibold text-emerald-500">Create Invoice</button>
+              <button onClick={() => navigate('/quotation')} className="block w-full text-left py-3 font-semibold text-emerald-500">Create Quotation</button>
         </div>
       )}
     </nav>
@@ -246,8 +268,10 @@ const THEME_KEY = 'invoicely-theme';
 
 const HomePage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const navigate = useNavigate();
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
+  const navigate = useNavigate();
   // Load initial theme
   useEffect(() => {
     const saved = localStorage.getItem(THEME_KEY);
@@ -288,8 +312,8 @@ const HomePage = () => {
   };
 
   const mainWrapperClasses = isDarkMode
-    ? 'bg-slate-950 text-white selection:bg-indigo-900 selection:text-indigo-100'
-    : 'bg-white text-slate-900 selection:bg-indigo-100 selection:text-indigo-900';
+    ? 'bg-slate-950 text-white selection:bg-emerald-900 selection:text-emerald-100'
+    : 'bg-white text-slate-900 selection:bg-emerald-100 selection:text-emerald-900';
 
   return (
     <div className={`min-h-screen transition-colors duration-300 scroll-smooth ${mainWrapperClasses}`}>
@@ -297,7 +321,8 @@ const HomePage = () => {
       <Navbar toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
 
       {/* Hero Section */}
-      <section className="relative pt-20 md:pt-32 pb-20 md:pb-28 px-5 overflow-hidden">
+      {/* EDITED: Reduced padding from pt-20 md:pt-32 to pt-10 md:pt-20 */}
+      <section className="relative pt-10 md:pt-20 pb-20 md:pb-28 px-5 overflow-hidden">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* Left Side */}
@@ -306,8 +331,8 @@ const HomePage = () => {
               <Badge
                 className={
                   isDarkMode
-                    ? 'bg-indigo-900 text-indigo-100 border border-indigo-800'
-                    : 'bg-indigo-50 text-indigo-800 border border-indigo-100'
+                    ? 'bg-emerald-900 text-emerald-100 border border-emerald-800'
+                    : 'bg-emerald-50 text-emerald-800 border border-emerald-100'
                 }
               >
                 <Zap className="w-3 h-3 mr-1" />
@@ -321,8 +346,8 @@ const HomePage = () => {
               >
                 Professional invoices,
                 <br />
-                <span className={isDarkMode ? 'text-indigo-300' : 'text-indigo-600'}>
-                   quotes & estimates.
+                <span className={isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}>
+                    quotes & estimates.
                 </span>
               </h1>
 
@@ -339,10 +364,10 @@ const HomePage = () => {
                 {/* Invoice Button */}
                 <button
                   onClick={() => navigate('/invoice')}
-                  className="px-7 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl
-                  text-sm font-semibold shadow-lg hover:shadow-indigo-600/25 hover:-translate-y-0.5
+                  className="px-7 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl
+                  text-sm font-semibold shadow-lg hover:shadow-emerald-600/25 hover:-translate-y-0.5
                   transition-all flex items-center justify-center gap-2 focus:outline-none
-                  focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300"
+                  focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-300"
                 >
                   Create Invoice
                   <ArrowRight className="w-4 h-4" />
@@ -385,7 +410,7 @@ const HomePage = () => {
             <div className="relative">
               <div
                 className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] blur-3xl rounded-full pointer-events-none ${
-                  isDarkMode ? 'bg-indigo-500/15' : 'bg-indigo-500/10'
+                  isDarkMode ? 'bg-emerald-500/15' : 'bg-emerald-500/10'
                 }`}
               />
               <HeroMockupSwitcher isDarkMode={isDarkMode} />
@@ -411,7 +436,7 @@ const HomePage = () => {
                 <h4 className={`mb-2 flex items-center gap-2 text-sm font-semibold ${
                   isDarkMode ? 'text-white' : 'text-slate-900'
                 }`}>
-                  <Shield className="w-4 h-4 text-indigo-500" />
+                  <Shield className="w-4 h-4 text-emerald-500" />
                   Privacy-first architecture
                 </h4>
                 <p className={`text-sm leading-relaxed ${
@@ -425,7 +450,7 @@ const HomePage = () => {
                 <h4 className={`mb-2 flex items-center gap-2 text-sm font-semibold ${
                   isDarkMode ? 'text-white' : 'text-slate-900'
                 }`}>
-                  <Download className="w-4 h-4 text-indigo-500" />
+                  <Download className="w-4 h-4 text-emerald-500" />
                   Clean, standard exports
                 </h4>
                 <p className={`text-sm leading-relaxed ${
@@ -439,7 +464,7 @@ const HomePage = () => {
                 <h4 className={`mb-2 flex items-center gap-2 text-sm font-semibold ${
                   isDarkMode ? 'text-white' : 'text-slate-900'
                 }`}>
-                  <Zap className="w-4 h-4 text-indigo-500" />
+                  <Zap className="w-4 h-4 text-emerald-500" />
                   Built for speed
                 </h4>
                 <p className={`text-sm leading-relaxed ${
@@ -521,51 +546,116 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* EDITED: Added About Us Section */}
+      <section className={`py-16 border-t ${
+        isDarkMode ? 'border-slate-800 bg-slate-900/30' : 'border-slate-100 bg-slate-50/50'
+      }`}>
+        <div className="max-w-4xl mx-auto px-5 text-center">
+          <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+            About Us
+          </h2>
+          <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+            Indiebyll is a free tool built by{' '}
+            <a
+              href="https://www.thebrchub.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-500 hover:text-emerald-400 font-medium"
+            >
+              Blazing Render Creation Hub LLP
+            </a>
+            , designed to support freelancers and small businesses with simple, practical solutions.  
+            We’re committed to keeping Indiebyll free and continuously improving it. If you have feature requests or face any issues, feel free to share feedback or reach out using the contact details provided — your input helps us make the tool better.
+          </p>
+        </div>
+      </section>
+
+
       {/* Footer */}
-      <footer
-        className={`py-10 border-t ${
-          isDarkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-white'
+<footer
+  className={`py-12 border-t ${
+    isDarkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-white'
+  }`}
+>
+  <div className="max-w-7xl mx-auto px-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+
+    {/* Left */}
+    <div>
+      <div
+        className={`text-lg font-semibold ${
+          isDarkMode ? 'text-white' : 'text-slate-900'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        Indie
+        <span className={isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}>
+          Byll
+        </span>
+      </div>
 
-          <div>
-            <div
-              className={`text-sm font-semibold flex items-baseline gap-1 ${
-                isDarkMode ? 'text-white' : 'text-slate-900'
-              }`}
-            >
-              Invoicely <span className={isDarkMode ? 'text-indigo-300' : 'text-indigo-600'}>Free</span>
-            </div>
+      <p className={`mt-2 text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+        A focused, privacy-respecting invoice & quote generator.
+      </p>
 
-            <p className={`mt-1 text-xs ${isDarkMode ? 'text-slate-500' : 'text-slate-500'}`}>
-              A focused, privacy-respecting invoice & quote generator.
-            </p>
+      <p className={`mt-3 text-xs ${isDarkMode ? 'text-slate-500' : 'text-slate-500'}`}>
+        © 2025 IndieByll. All rights reserved.
+      </p>
+    </div>
 
-            <p className={`mt-2 text-[11px] ${isDarkMode ? 'text-slate-600' : 'text-slate-500'}`}>
-              © 2024 InvoicelyFree. All rights reserved.
-            </p>
-          </div>
+    {/* Right */}
+    <div className="flex flex-col items-start md:items-end gap-3 text-sm">
+      <div className={`flex gap-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+        <button
+          type="button"
+          onClick={() => setShowPrivacy(true)}
+          className={`transition-colors ${
+            isDarkMode ? 'hover:text-emerald-300' : 'hover:text-emerald-600'
+          }`}
+        >
+          Privacy
+        </button>
 
-          <div className="flex flex-col items-start md:items-end gap-2 text-xs">
-            <div className={`flex gap-4 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-              <a className={isDarkMode ? 'hover:text-indigo-300' : 'hover:text-indigo-600'} href="#">
-                Privacy
-              </a>
-              <a className={isDarkMode ? 'hover:text-indigo-300' : 'hover:text-indigo-600'} href="#">
-                Terms
-              </a>
-              <a className={isDarkMode ? 'hover:text-indigo-300' : 'hover:text-indigo-600'} href="#">
-                GitHub
-              </a>
-            </div>
-            <div className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-500'}`}>
-              No cookies. No trackers. Just invoices.
-            </div>
-          </div>
+        <button
+          type="button"
+          onClick={() => setShowTerms(true)}
+          className={`transition-colors ${
+            isDarkMode ? 'hover:text-emerald-300' : 'hover:text-emerald-600'
+          }`}
+        >
+          Terms
+        </button>
+      </div>
 
-        </div>
-      </footer>
+      <a
+        href="mailto:indiebyll@thebrchub.tech"
+        className={`text-sm transition-colors ${
+          isDarkMode
+            ? 'text-slate-400 hover:text-emerald-300'
+            : 'text-slate-600 hover:text-emerald-600'
+        }`}
+      >
+        Contact: indiebyll@thebrchub.tech
+      </a>
+
+      <div className={`text-xs ${isDarkMode ? 'text-slate-500' : 'text-slate-500'}`}>
+        No cookies. No trackers. Just invoices.
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<PrivacyModal
+  isOpen={showPrivacy}
+  onClose={() => setShowPrivacy(false)}
+  isDarkMode={isDarkMode}
+/>
+
+<TermsModal
+  isOpen={showTerms}
+  onClose={() => setShowTerms(false)}
+  isDarkMode={isDarkMode}
+/>
+
 
       {/* FIXED: Standard HTML Style Tag instead of 'style jsx' */}
       <style>{`
