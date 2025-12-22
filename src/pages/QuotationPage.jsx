@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Plus, Trash2, Printer, ImageIcon, Briefcase, Save, UserPlus, X, Users,
   ChevronLeft, ChevronDown, Moon, Sun, Signature, Scan, CheckCircle,
   Download, MessageSquare, AlertCircle, Calendar, Target, ShieldCheck,
-  Award, Clock, ChevronRight, Palette, Edit3, Eye
+  Award, Clock, Edit3, Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -157,8 +157,7 @@ const FeedbackWidget = () => {
 /* --- MAIN QUOTATION COMPONENT --- */
 
 const QuotationGenerator = () => {
-  // Mobile Responsiveness State
-  const [activeMobileTab, setActiveMobileTab] = useState('edit'); // 'edit' or 'preview'
+  const [activeMobileTab, setActiveMobileTab] = useState('edit');
   const navigate = useNavigate();
 
   const [data, setData] = useState(() => {
@@ -277,12 +276,7 @@ const QuotationGenerator = () => {
   };
 
   const handleBack = () => {
-      // Check if we can use React Router, otherwise fallback
-      if (navigate) {
-          navigate('/');
-      } else {
-          window.location.href = '/';
-      }
+      if (navigate) { navigate('/'); } else { window.location.href = '/'; }
   };
 
   const currencySymbol = CURRENCIES[data.currencyCode]?.symbol || '₹';
@@ -300,19 +294,13 @@ const QuotationGenerator = () => {
   return (
     <div className={`min-h-screen font-sans selection:bg-indigo-500/30 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
 
-      {/* MOBILE TAB NAVIGATION (VISIBLE ONLY ON MOBILE) */}
+      {/* MOBILE TAB NAVIGATION */}
       <div className={`md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-[60] flex items-center justify-around py-2 px-2 no-print ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white'}`}>
-        <button
-          onClick={() => setActiveMobileTab('edit')}
-          className={`flex flex-col items-center gap-1 p-2 rounded-lg w-full ${activeMobileTab === 'edit' ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20' : 'text-slate-400'}`}
-        >
+        <button onClick={() => setActiveMobileTab('edit')} className={`flex flex-col items-center gap-1 p-2 rounded-lg w-full ${activeMobileTab === 'edit' ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20' : 'text-slate-400'}`}>
           <Edit3 size={18} />
           <span className="text-[10px] font-bold uppercase">Editor</span>
         </button>
-        <button
-          onClick={() => setActiveMobileTab('preview')}
-          className={`flex flex-col items-center gap-1 p-2 rounded-lg w-full ${activeMobileTab === 'preview' ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20' : 'text-slate-400'}`}
-        >
+        <button onClick={() => setActiveMobileTab('preview')} className={`flex flex-col items-center gap-1 p-2 rounded-lg w-full ${activeMobileTab === 'preview' ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20' : 'text-slate-400'}`}>
           <Eye size={18} />
           <span className="text-[10px] font-bold uppercase">Preview</span>
         </button>
@@ -350,9 +338,7 @@ const QuotationGenerator = () => {
           </div>
         )}
 
-        {/* SCROLLABLE FORM */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin pb-24 md:pb-6">
-
           {/* CLIENTS */}
           <div className={`p-4 rounded-xl border border-dashed ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
             <h3 className="text-xs font-bold uppercase text-slate-500 mb-3 flex items-center gap-2"><Users size={14} /> Client Management</h3>
@@ -379,12 +365,7 @@ const QuotationGenerator = () => {
                   <div className="flex-1 space-y-2">
                     <label className={labelClass}>Brand Color</label>
                     <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={data.brandColor}
-                        onChange={(e) => updateField('brandColor', e.target.value)}
-                        className="w-12 h-12 rounded-lg cursor-pointer border-0 p-0"
-                      />
+                      <input type="color" value={data.brandColor} onChange={(e) => updateField('brandColor', e.target.value)} className="w-12 h-12 rounded-lg cursor-pointer border-0 p-0" />
                       <div className="text-xs text-slate-500">
                         <p>Pick any solid color.</p>
                         <p className="font-mono mt-0.5">{data.brandColor}</p>
@@ -435,30 +416,23 @@ const QuotationGenerator = () => {
             </button>
             {openSections.strategy && (
               <div className="mt-5 space-y-5 animate-fade-in-down">
-                {/* Project Title & Desc */}
                 <div><label className={labelClass}>Project Title</label><input className={inputClass} placeholder="e.g. Website Redesign" value={data.projectTitle} onChange={e => updateField('projectTitle', e.target.value)} /></div>
                 <div><label className={labelClass}>Project Summary</label><RichTextarea className={inputClass} rows={2} placeholder="Brief summary..." value={data.projectDescription} onChange={e => updateField('projectDescription', e.target.value)} /></div>
 
                 <hr className={`border-dashed ${isDark ? 'border-slate-700' : 'border-slate-200'}`} />
 
-                {/* Business Outcome */}
                 <div>
                   <label className={labelClass}><Target size={12} className="inline mr-1" /> Business Objectives / ROI</label>
-                  <textarea className={inputClass} rows={2} placeholder="e.g. Increase lead generation by 30%, Improve brand credibility..." value={data.projectGoals} onChange={e => updateField('projectGoals', e.target.value)} />
-                  <p className="text-[10px] text-slate-400 mt-1">Sell the outcome, not just the service.</p>
+                  <textarea className={inputClass} rows={2} placeholder="e.g. Increase lead generation by 30%..." value={data.projectGoals} onChange={e => updateField('projectGoals', e.target.value)} />
                 </div>
 
-                {/* Why Us */}
                 <div>
                   <label className={labelClass}><Award size={12} className="inline mr-1" /> Why Choose Us?</label>
-                  <textarea className={inputClass} rows={2} placeholder="e.g. Industry specialized, 24/7 support, proprietary tech..." value={data.companyHighlights} onChange={e => updateField('companyHighlights', e.target.value)} />
+                  <textarea className={inputClass} rows={2} placeholder="e.g. Industry specialized..." value={data.companyHighlights} onChange={e => updateField('companyHighlights', e.target.value)} />
                 </div>
 
-                {/* Timeline */}
                 <div>
                   <label className={labelClass}><Clock size={12} className="inline mr-1" /> Project Timeline</label>
-
-                  {/* Timeline Heading Input */}
                   <div className="mb-3">
                     <span className="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Timeline Heading</span>
                     <input className={inputClass} value={data.timelineTitle} onChange={e => updateField('timelineTitle', e.target.value)} placeholder="e.g. Estimated Timeline" />
@@ -600,13 +574,13 @@ const QuotationGenerator = () => {
         {/* FOOTER ACTIONS */}
         <div className={`p-4 border-t shrink-0 flex gap-3 pb-24 md:pb-4 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200'}`}>
           <button onClick={handleSave} className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${isDark ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}><Save size={18} /> Save Data</button>
-          <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"><Printer size={18} /> Print / PDF</button>
+          <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all active:scale-95"><Printer size={18} /> Print / PDF</button>
         </div>
       </div>
 
       {/* RIGHT PANEL (PREVIEW) */}
       <div className={`
-        flex-1 bg-gray-100 overflow-y-auto p-4 md:p-10 print-container 
+        flex-1 bg-gray-100 overflow-y-auto p-4 md:p-10 print-container
         md:ml-[480px]
         ${activeMobileTab === 'preview' ? 'block' : 'hidden md:block'}
       `}>
@@ -614,15 +588,18 @@ const QuotationGenerator = () => {
           <button onClick={() => window.print()} className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-xl hover:bg-black transition-transform hover:-translate-y-1"><Download size={14} /> Download PDF</button>
         </div>
 
-        {/* ✅ FIXED GLOBAL FOOTER ✅ */}
-        <div className="hidden print:block fixed bottom-0 left-0 w-full text-center pb-4 bg-white z-50">
+        {/* ✅ FIXED FOOTER FOR PRINT ONLY ✅ */}
+        <div className="hidden print:flex fixed bottom-0 left-0 w-full justify-center pb-2 z-50 bg-white">
           <p className="text-[10px] text-slate-400 font-medium">Generated by IndieByll</p>
         </div>
 
-        {/* A4 DOCUMENT PAGE - SCALED ON MOBILE */}
-        <div className="flex justify-center pb-24 md:pb-0">
+        {/* A4 DOCUMENT PAGE */}
+        <div className="flex justify-center pb-24 md:pb-0 flex-col items-center">
           <div className="transform scale-[0.45] sm:scale-[0.6] md:scale-100 origin-top transition-transform duration-200">
-            <div className="bg-white w-[210mm] min-h-[297mm] mx-auto p-12 shadow-2xl relative text-slate-900 print:shadow-none print:w-full print:max-w-none flex flex-col page-break-inside-avoid">
+            
+            {/* MAIN PAGE */}
+            <div className="bg-white w-[210mm] min-h-[297mm] mx-auto p-8 shadow-2xl relative text-slate-900 print:shadow-none print:w-full print:max-w-none flex flex-col">
+              
               {/* Header */}
               <div className="flex justify-between items-start mb-10">
                 <div className="w-[55%]">
@@ -659,9 +636,9 @@ const QuotationGenerator = () => {
                 )}
               </div>
 
-              {/* NEW: STRATEGIC SECTION (Objectives & Why Us) */}
+              {/* STRATEGIC SECTION */}
               {(data.projectGoals || data.companyHighlights) && (
-                <div className="mb-8 grid grid-cols-2 gap-8 page-break-inside-avoid">
+                <div className="mb-8 grid grid-cols-2 gap-8 break-inside-avoid">
                   {data.projectGoals && (
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                       <h3 style={{ color: data.brandColor }} className="text-xs font-bold uppercase mb-2 flex items-center gap-1"><Target size={12} /> Project Goals</h3>
@@ -678,24 +655,24 @@ const QuotationGenerator = () => {
               )}
 
               {(data.projectTitle || data.projectDescription) && (
-                <div className="mb-6 page-break-inside-avoid">
+                <div className="mb-6 break-inside-avoid">
                   {data.projectTitle && <h3 className="text-sm font-bold text-slate-800 mb-1">{data.projectTitle}</h3>}
                   {data.projectDescription && <RichTextRenderer text={data.projectDescription} className="text-sm text-slate-600 leading-relaxed" />}
                 </div>
               )}
 
-              {/* NEW: TIMELINE */}
+              {/* ✅ FIXED TIMELINE ALIGNMENT ✅ */}
               {data.timeline && data.timeline.length > 0 && data.timeline[0].phase && (
-                <div className="mb-8 page-break-inside-avoid">
+                <div className="mb-8 break-inside-avoid">
                   <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">{data.timelineTitle}</h3>
-                  <div className="flex flex-wrap gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {data.timeline.map((item, idx) => (
-                      <div key={item.id} className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-lg text-sm">
-                        <div className="bg-slate-100 text-slate-500 font-bold w-6 h-6 rounded-full flex items-center justify-center text-xs">{idx + 1}</div>
-                        <div>
-                          <p className="font-bold text-slate-800 leading-none">{item.phase}</p>
-                          <p className="text-xs text-slate-500 mt-0.5">{item.duration}</p>
+                      <div key={item.id} className="flex flex-col gap-1 bg-white border border-slate-200 p-3 rounded-lg text-sm shadow-sm break-inside-avoid">
+                        <div className="flex justify-between items-start">
+                          <span className="bg-slate-100 text-slate-500 font-bold w-5 h-5 rounded flex items-center justify-center text-[10px]">{idx + 1}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">{item.duration}</span>
                         </div>
+                        <p className="font-bold text-slate-800 mt-1 leading-tight">{item.phase}</p>
                       </div>
                     ))}
                   </div>
@@ -713,7 +690,7 @@ const QuotationGenerator = () => {
                 </thead>
                 <tbody className="text-sm">
                   {data.items.map((item) => (
-                    <tr key={item.id} className="border-b border-slate-100 last:border-0 page-break-inside-avoid">
+                    <tr key={item.id} className="border-b border-slate-100 last:border-0 break-inside-avoid">
                       <td className="py-4 px-4 font-medium text-slate-700 break-words max-w-[50%]">{item.description}</td>
                       <td className="py-4 px-4 text-right text-slate-500">{item.quantity}</td>
                       <td className="py-4 px-4 text-right text-slate-500">{item.price.toLocaleString()}</td>
@@ -723,7 +700,7 @@ const QuotationGenerator = () => {
                 </tbody>
               </table>
 
-              <div className="flex justify-end mb-16 page-break-inside-avoid">
+              <div className="flex justify-end mb-10 break-inside-avoid">
                 <div className="w-72 space-y-3">
                   <div className="flex justify-between text-sm text-slate-600"><span>Subtotal</span><span className="font-medium">{fmt(subtotal)}</span></div>
                   {data.discountAmount > 0 && (<div className="flex justify-between text-sm text-emerald-600"><span>Discount</span><span>- {fmt(data.discountAmount)}</span></div>)}
@@ -732,17 +709,17 @@ const QuotationGenerator = () => {
                 </div>
               </div>
 
-              <div className="mt-auto page-break-inside-avoid">
-                {/* TERMS & CONDITIONS BLOCK WITH MARGIN */}
+              <div className="mt-auto">
+                {/* ✅ PREVENT ABRUPT BREAKS IN TERMS ✅ */}
                 {data.notes && (
-                  <div className="mt-12 mb-12 p-5 bg-slate-50 rounded-xl border border-slate-100 page-break-inside-avoid">
+                  <div className="mt-4 mb-8 p-5 bg-slate-50 rounded-xl border border-slate-100 break-inside-avoid">
                     <h4 className="text-[10px] font-bold uppercase text-slate-400 mb-2">Terms & Conditions</h4>
                     <RichTextRenderer text={data.notes} className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap" />
                   </div>
                 )}
 
                 {/* SIGNATURE BLOCK */}
-                <div className="flex justify-between items-end pt-6 pb-8 border-b border-slate-100 mb-6 page-break-inside-avoid">
+                <div className="flex justify-between items-end pt-6 pb-8 border-b border-slate-100 mb-6 break-inside-avoid">
                   <div className="text-left"><div className="h-16 w-48 border-b-2 border-slate-200 mb-2"></div><p className="text-sm font-bold text-slate-800">Client Acceptance</p><p className="text-[10px] text-slate-400 uppercase tracking-wide">Sign & Date Above</p></div>
                   {data.showSignatory && (
                     <div className="text-right">
@@ -759,17 +736,15 @@ const QuotationGenerator = () => {
                 <div className="absolute bottom-24 right-[45%] text-center"><img src={data.qrCode} className="w-20 h-20 object-cover mx-auto border p-1" alt="QR" /><span className="text-[9px] font-bold uppercase text-slate-400 mt-1 block">Scan to Pay</span></div>
               )}
             </div>
-          </div>
 
-          {/* ANNEXURE PAGE (Page 2) */}
-          {data.annexure?.show && (
-            <div className="transform scale-[0.45] sm:scale-[0.6] md:scale-100 origin-top transition-transform duration-200 mt-10 md:mt-0">
-              <div className="bg-white w-[210mm] min-h-[297mm] mx-auto p-12 shadow-2xl relative text-slate-900 mt-10 page-break print:mt-0 print:min-h-0 print:h-auto">
+            {/* ✅ ANNEXURE (FORCED NEW PAGE) ✅ */}
+            {data.annexure?.show && (
+              <div className="bg-white w-[210mm] min-h-[297mm] mx-auto p-8 shadow-2xl relative text-slate-900 mt-10 print:mt-0 print:shadow-none print:w-full print:break-before-page break-before-page">
                 <div className="flex justify-between items-end border-b pb-4 mb-8"><h2 style={{ color: data.brandColor }} className="text-3xl font-bold">{data.annexure.title}</h2><span className="text-sm text-slate-500">Ref: {data.quotationNumber}</span></div>
                 <RichTextRenderer text={data.annexure.content} className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed" />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
@@ -783,14 +758,39 @@ const QuotationGenerator = () => {
         .animate-fade-in { animation: fade-in-down 0.15s ease-out; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
         @media print {
-          html, body { background: white; margin: 0; padding: 0; }
-          .no-print { display: none !important; }
-          .print-container { margin: 0 !important; padding: 0 !important; overflow: visible !important; }
-          .shadow-2xl { shadow: none !important; box-shadow: none !important; }
-          .page-break { page-break-before: always; }
-          .page-break-inside-avoid { break-inside: avoid; }
-          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          /* Force page break for Annexure */
+          .break-before-page { 
+            page-break-before: always !important; 
+            break-before: page !important; 
+            margin-top: 0 !important;
+          }
+
+          /* Prevent weird cuts inside elements */
+          .break-inside-avoid { 
+            page-break-inside: avoid !important; 
+            break-inside: avoid !important;
+          }
+
+          /* Remove scaling transforms */
+          [class*="scale-"] { transform: none !important; }
+          div[class*="transform"] { transform: none !important; }
+          
+          /* Full width force */
+          .bg-white { 
+            width: 100% !important; 
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 20px !important; /* Minimal padding for print */
+            box-shadow: none !important;
+          }
+          
+          .print-container { 
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+          }
         }
       `}</style>
     </div>
